@@ -71,6 +71,13 @@ def main():
     # fpdf2 doesn't support nested tags in table cells
     html_body = strip_tags_in_cells(html_body)
 
+    # Style headings with navy blue instead of default red
+    html_body = re.sub(
+        r"<(h[1-3])>",
+        r'<\1 style="color: #1e3a5f;">',
+        html_body,
+    )
+
     pdf = StrategyPDF(orientation="P", unit="mm", format="letter")
     pdf.alias_nb_pages()
     pdf.set_auto_page_break(auto=True, margin=20)
