@@ -102,6 +102,10 @@ All other dependencies (fpdf2, PyMuPDF, markdown) should already be installed. I
 pip3 install fpdf2 PyMuPDF markdown
 ```
 
+## Related Workspaces
+
+See `~/WORKSPACES.md` for navigation. Personal automation in `~/LifeOS/`, business tools in `~/BusinessOS/`.
+
 ## Development Commands
 
 ```bash
