@@ -18,9 +18,10 @@ from fpdf import FPDF
 FONT_DIR = "/System/Library/Fonts/Supplemental"
 
 # Row background colors for keyword gap table
-COLOR_GREEN = "#dcfce7"   # Yes / Already present
-COLOR_YELLOW = "#fef9c3"  # Reframed / Added / Partial
-COLOR_RED = "#fee2e2"     # No / Cannot add / Gap
+COLOR_GREEN = "#dcfce7"   # Yes / Already present / HIGH / Excellent
+COLOR_YELLOW = "#fef9c3"  # Reframed / Added / Partial / MODERATE
+COLOR_ORANGE = "#ffedd5"  # LOW
+COLOR_RED = "#fee2e2"     # No / Cannot add / Gap / VERY LOW
 
 
 def strip_tags_in_cells(html):
@@ -57,6 +58,70 @@ def classify_row(cell_text):
     if "no" in lower or "gap" in lower or "cannot" in lower or "not in" in lower:
         return "red"
     return "yellow"
+
+
+def classify_ats_rating(cell_text):
+    """Classify an ATS score row by its Rating value."""
+    lower = cell_text.lower().strip()
+    if any(k in lower for k in ("excellent", "high", "good")):
+        return "green"
+    if "moderate" in lower:
+        return "yellow"
+    if "low" in lower and "very" not in lower:
+        return "orange"
+    if "very low" in lower:
+        return "red"
+    return "yellow"
+
+
+def color_ats_score_table(html):
+    """Color-code the ATS Compatibility Assessment table rows."""
+    table_pattern = re.compile(r"(<table>)(.*?)(</table>)", re.DOTALL)
+
+    def process_table(match):
+        table_start = match.group(1)
+        table_content = match.group(2)
+        table_end = match.group(3)
+
+        # Only process ATS score tables
+        if "ATS Format Score" not in table_content and "Overall ATS" not in table_content:
+            return match.group(0)
+
+        row_pattern = re.compile(r"(<tr>)(.*?)(</tr>)", re.DOTALL)
+        rows = list(row_pattern.finditer(table_content))
+
+        new_content = table_content
+        for row_match in reversed(rows):
+            row_html = row_match.group(2)
+
+            if "<th>" in row_html or "<th " in row_html:
+                continue
+
+            cells = re.findall(r"<td[^>]*>(.*?)</td>", row_html, re.DOTALL)
+            if len(cells) >= 3:
+                rating_cell = cells[2]  # Rating is the 3rd column
+                color_class = classify_ats_rating(rating_cell)
+
+                bg = {
+                    "green": COLOR_GREEN,
+                    "yellow": COLOR_YELLOW,
+                    "orange": COLOR_ORANGE,
+                    "red": COLOR_RED,
+                }[color_class]
+
+                colored_html = re.sub(
+                    r"<td([^>]*)>",
+                    f'<td\\1 bgcolor="{bg}">',
+                    row_html,
+                )
+                colored_row = f"<tr>{colored_html}</tr>"
+                start = row_match.start()
+                end = row_match.end()
+                new_content = new_content[:start] + colored_row + new_content[end:]
+
+        return table_start + new_content + table_end
+
+    return table_pattern.sub(process_table, html)
 
 
 def color_keyword_gap_table(html):
@@ -190,6 +255,9 @@ def main():
 
     # fpdf2 doesn't support nested tags in table cells
     html_body = strip_tags_in_cells(html_body)
+
+    # Color-code ATS score table rows
+    html_body = color_ats_score_table(html_body)
 
     # Color-code keyword gap table rows
     html_body = color_keyword_gap_table(html_body)

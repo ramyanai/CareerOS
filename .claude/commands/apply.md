@@ -140,11 +140,74 @@ If you had to fix any lines, note them — they'll go in the change log.
 
 Create a comprehensive strategy document with these 8 sections:
 
+### ATS Score Calculation
+
+Before writing the strategy document, calculate three scores:
+
+**1. ATS Format Score (0-100)**
+Start at 100, deduct for issues:
+- Missing standard heading (Summary/Experience/Education/Skills): -10 each
+- Missing contact field (email, phone, location): -5 each
+- No LinkedIn URL: -5
+- Non-standard date format: -5
+- Skills not in dedicated section: -10
+- Complex formatting (tables, columns): -10
+Since our output always follows ATS rules, this will typically be 90-100.
+
+**2. Keyword Match Score (0-100)**
+From the gap analysis table:
+- Count each "Yes" as 1.0, each "Partial" as 0.5, each "No/Gap" as 0
+- Score = (weighted_sum / total_keywords) × 100
+
+**3. Experience Fit Score (0-100)**
+Evaluate actual qualification match:
+- Years of experience: meets/exceeds requirement? (+20 if yes, proportional if under)
+- Required qualifications: count met vs total, weight at 60 points proportional
+- Industry alignment: 0-10 (how relevant is candidate's industry to the role)
+- Seniority match: 0-10 (is the role level appropriate for their experience)
+
+**Overall ATS Pass Likelihood:**
+`Overall = ATS_Format × 0.20 + Keyword_Match × 0.60 + Experience_Fit × 0.20`
+
+**Rating labels:**
+- 80-100: HIGH — Strong candidate, likely to get recruiter review
+- 60-79: MODERATE — Will pass ATS but may be ranked mid-pack
+- 40-59: LOW — Risk of being filtered; gaps may hurt
+- 0-39: VERY LOW — Significant mismatch; reconsider fit
+
 ### Strategy Markdown Format
 ```markdown
 # Application Strategy: {COMPANY_NAME} — {ROLE_TITLE}
 
 *Generated {today's date}*
+
+## ATS Compatibility Assessment
+
+| Metric | Score | Rating |
+|--------|-------|--------|
+| ATS Format Score | X/100 | [Excellent/Good/Moderate/Low] |
+| Keyword Match Score | X/100 | [rating] |
+| Experience Fit Score | X/100 | [rating] |
+| **Overall ATS Pass Likelihood** | **X/100** | **[HIGH/MODERATE/LOW/VERY LOW]** |
+
+*Weighted: Format 20% + Keywords 60% + Experience 20%*
+
+### ATS Format Score: X/100
+- ✓ [checklist of format compliance items that pass]
+- ✗ [any deductions with point values]
+
+### Keyword Match Score: X/100
+- N exact matches (×1.0), N partial matches (×0.5), N gaps (×0)
+- Weighted: X / Y = Z%
+- Critical gaps: [list top 3-5 missing keywords that hurt most]
+
+### Experience Fit Score: X/100
+- ✓/✗ Years of experience: [candidate years] vs [required years]
+- ✓/✗ [Each required qualification with pass/fail]
+- Industry alignment: [assessment]
+- Seniority match: [assessment]
+
+---
 
 ## 1. Keyword Gap Analysis
 

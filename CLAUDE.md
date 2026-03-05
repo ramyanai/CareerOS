@@ -155,7 +155,7 @@ Each `/apply` run generates 9 files:
 | File | Format | Description |
 |------|--------|-------------|
 | Tailored Resume | MD + PDF + DOCX | Reframed for JD, ATS-optimized |
-| Application Strategy | MD + PDF | 8-section strategy with color-coded keyword gap table |
+| Application Strategy | MD + PDF | ATS score + 8-section strategy with color-coded tables |
 | Change Log | MD + PDF | Line-by-line diff with color-coded change types |
 | Cover Letter | PDF + DOCX | Professional letter extracted from strategy |
 
@@ -170,6 +170,12 @@ Each `/apply` run generates 9 files:
 Name extracted from master resume filename. Company and Role from JD parsing. Company slug: lowercase, hyphens for spaces.
 
 ## Strategy Sections
+
+**ATS Compatibility Assessment** (top of document, before Section 1):
+- Three-score system: ATS Format Score, Keyword Match Score, Experience Fit Score
+- Overall ATS Pass Likelihood = Format×20% + Keywords×60% + Experience×20%
+- Color-coded by rating: Excellent=green, Moderate=yellow, Low=orange, Very Low=red
+- Scoring: Format starts at 100 (deduct for issues), Keywords = weighted sum (Yes=1.0, Partial=0.5, Gap=0), Experience = years + qualifications + industry + seniority
 
 1. **Keyword Gap Analysis** — color-coded table (green/yellow/red) with match score
 2. **Cover Letter Draft** — opening, body, close
