@@ -54,6 +54,7 @@ The `/apply` command enforces strict guardrails:
 │       ├── {Name}_{Company}_{Role}_Strategy_{YYYY-MM-DD}.md   # Strategy doc
 │       ├── {Name}_{Company}_{Role}_Strategy_{YYYY-MM-DD}.pdf  # Strategy PDF
 │       ├── {Name}_{Company}_{Role}_Changes_{YYYY-MM-DD}.md    # Change log
+│       ├── {Name}_{Company}_{Role}_Changes_{YYYY-MM-DD}.pdf    # Change log PDF (color-coded)
 │       ├── {Name}_{Company}_{Role}_CoverLetter_{YYYY-MM-DD}.pdf   # Cover letter PDF
 │       └── {Name}_{Company}_{Role}_CoverLetter_{YYYY-MM-DD}.docx  # Cover letter DOCX
 ├── scripts/
@@ -63,6 +64,7 @@ The `/apply` command enforces strict guardrails:
 │   ├── generate-strategy-pdf.py      # Strategy doc -> styled PDF (color-coded tables)
 │   ├── generate-gaps-pdf.py          # Gaps report -> color-coded PDF
 │   ├── generate-cover-letter-pdf.py  # Cover letter -> letter-format PDF
+│   ├── generate-changelog-pdf.py     # Change log -> color-coded PDF
 │   ├── generate-cover-letter-docx.py # Cover letter -> ATS-friendly DOCX
 │   ├── pipeline-dashboard.py         # Streamlit pipeline dashboard (port 8505)
 │   ├── run-apply.sh                  # Orchestration: command -> all docs -> Finder
@@ -75,16 +77,13 @@ The `/apply` command enforces strict guardrails:
 ### Single Application
 1. Place your source resume in `documents/resume/` as `YourName_Master_YYYY-MM-DD.md` (or .pdf/.docx)
 2. Run `/apply CompanyName` and paste the full job description when prompted
-3. Command generates tailored resume, strategy (8 sections), and change log as markdown
-4. Run `bash scripts/run-apply.sh` to generate PDF + DOCX files and open the output folder
+3. Command generates all files (markdown + PDF + DOCX) and opens the output folder in Finder
 
 ### Batch Processing (Multiple JDs)
 1. Paste multiple JDs into `job-descriptions/JD_CURRENT.txt` (plain text, **not** RTF) separated by `=== COMPANY NAME ===` markers
 2. Run `/batch` — parses all JDs, confirms the batch plan, then processes each sequentially
 3. After completion, JD_CURRENT.txt is archived to `JD_Archive_YYYY-MM-DD.txt` and cleared for reuse
-4. Run `bash scripts/run-batch.sh` to generate PDFs + DOCX for all companies
-
-**Key rule:** Commands write markdown only. Shell scripts handle PDF/DOCX generation.
+4. Run `bash scripts/run-batch.sh` to generate PDFs + DOCX for all companies (or for specific companies: `bash scripts/run-batch.sh adobe google`)
 
 ## Custom Commands
 
@@ -151,13 +150,13 @@ Valid statuses: `Applied`, `Screened`, `Interviewing`, `Offer`, `Accepted`, `Rej
 
 ## Output Files
 
-Each `/apply` run generates 8 files:
+Each `/apply` run generates 9 files:
 
 | File | Format | Description |
 |------|--------|-------------|
 | Tailored Resume | MD + PDF + DOCX | Reframed for JD, ATS-optimized |
 | Application Strategy | MD + PDF | 8-section strategy with color-coded keyword gap table |
-| Change Log | MD | Line-by-line diff of every resume modification |
+| Change Log | MD + PDF | Line-by-line diff with color-coded change types |
 | Cover Letter | PDF + DOCX | Professional letter extracted from strategy |
 
 ## File Naming Convention
@@ -165,7 +164,7 @@ Each `/apply` run generates 8 files:
 - **Source resume**: `{Name}_Master_{YYYY-MM-DD}.md` in `documents/resume/`
 - **Tailored resume**: `{Name}_{Company}_{Role}_{YYYY-MM-DD}.md/.pdf/.docx`
 - **Strategy**: `{Name}_{Company}_{Role}_Strategy_{YYYY-MM-DD}.md/.pdf`
-- **Change log**: `{Name}_{Company}_{Role}_Changes_{YYYY-MM-DD}.md`
+- **Change log**: `{Name}_{Company}_{Role}_Changes_{YYYY-MM-DD}.md/.pdf`
 - **Cover letter**: `{Name}_{Company}_{Role}_CoverLetter_{YYYY-MM-DD}.pdf/.docx`
 
 Name extracted from master resume filename. Company and Role from JD parsing. Company slug: lowercase, hyphens for spaces.
@@ -230,6 +229,7 @@ See `~/WORKSPACES.md` for navigation. Personal automation in `~/LifeOS/`, busine
 
 - **2026-03-04: v1 had zero verification on resume tailoring** — The original `/apply` relied entirely on a prompt-level "NEVER fabricate" instruction with no validation pass, no diff output, and no transparency into what changed. → Rule: any AI-generated content in the user's voice MUST have a verification step AND a human-readable change log. Prompt-level constraints alone are insufficient.
 - **2026-03-04: Cover letter was buried in strategy doc** — Users had to copy-paste the cover letter from the strategy markdown. No standalone file existed. → Rule: if a section of output is independently useful (submitted separately), generate it as its own file.
+- **2026-03-04: Mixed date formats (YYMMDD vs YYYY-MM-DD)** — Filenames used YYMMDD while tracker/archives used YYYY-MM-DD, creating confusion. → Rule: pick one date format at project start and enforce it everywhere. Standardized to YYYY-MM-DD (ISO 8601). Cover letter display dates stay human-readable ("March 04, 2026").
 
 ## Development Commands
 
@@ -243,6 +243,7 @@ python3 scripts/generate-resume-docx.py output/company/Name_Company_Role_2026-03
 python3 scripts/generate-strategy-pdf.py output/company/Name_Company_Role_Strategy_2026-03-04.md
 python3 scripts/generate-gaps-pdf.py output/gaps_report_2026-03-04.md
 python3 scripts/generate-cover-letter-pdf.py output/company/Name_Company_Role_Strategy_2026-03-04.md
+python3 scripts/generate-changelog-pdf.py output/company/Name_Company_Role_Changes_2026-03-04.md
 python3 scripts/generate-cover-letter-docx.py output/company/Name_Company_Role_Strategy_2026-03-04.md
 
 # Full pipeline (single company)

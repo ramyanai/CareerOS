@@ -78,6 +78,13 @@ else
     echo "Warning: No strategy markdown found in $LATEST_DIR"
 fi
 
+# --- Change Log PDF ---
+CHANGES_MD=$(ls -t "$LATEST_DIR"*_Changes_*.md 2>/dev/null | head -1)
+if [ -n "$CHANGES_MD" ]; then
+    echo "Change Log PDF:"
+    python3 scripts/generate-changelog-pdf.py "$CHANGES_MD"
+fi
+
 # --- Summary ---
 echo ""
 echo "=== Output files ==="

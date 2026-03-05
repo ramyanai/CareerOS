@@ -393,7 +393,16 @@ Append a new row:
 | {today's date} | {COMPANY_NAME} | {ROLE_TITLE} | Applied | {today's date} | {FOLLOW_UP_DATE} | {CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_{YYYY-MM-DD}.md | {CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Strategy_{YYYY-MM-DD}.md | |
 ```
 
-## Step 7: Display Summary
+## Step 7: Generate Documents
+
+Run the document generation pipeline:
+```bash
+bash ~/CareerOS/scripts/run-apply.sh {COMPANY_SLUG}
+```
+
+This generates PDF + DOCX files for the resume, strategy, cover letter, and change log, then opens the output folder in Finder. Since the output directory already exists, `run-apply.sh` skips the `/apply` step and goes straight to document generation.
+
+## Step 8: Display Summary
 
 Print a concise summary:
 
@@ -405,9 +414,10 @@ Print a concise summary:
 **Candidate:** {CANDIDATE_NAME}
 
 ### Files Created
-- Resume: `output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_{YYYY-MM-DD}.md`
-- Strategy: `output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Strategy_{YYYY-MM-DD}.md`
-- Change Log: `output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Changes_{YYYY-MM-DD}.md`
+- Resume: `output/{COMPANY_SLUG}/` (MD + PDF + DOCX)
+- Strategy: `output/{COMPANY_SLUG}/` (MD + PDF)
+- Change Log: `output/{COMPANY_SLUG}/` (MD + PDF)
+- Cover Letter: `output/{COMPANY_SLUG}/` (PDF + DOCX)
 
 ### Match Score
 - X/Y JD keywords addressed (Z%)
@@ -415,9 +425,4 @@ Print a concise summary:
 ### Salary Range
 - Market: $X - $Y
 - Recommended ask: $X
-
-### Next Steps
-Run `bash scripts/run-apply.sh` to generate PDFs + DOCX files and open the output folder.
 ```
-
-**IMPORTANT:** Do NOT generate PDFs or DOCX files. The shell script `run-apply.sh` handles all document generation after this command finishes. Only write the markdown files and display the summary.

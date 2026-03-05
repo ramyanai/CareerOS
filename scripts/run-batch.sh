@@ -90,6 +90,13 @@ for DIR in "${DIRS[@]}"; do
         echo "  Warning: No strategy markdown found in $DIR"
     fi
 
+    # --- Change Log PDF ---
+    CHANGES_MD=$(ls -t "$DIR"*_Changes_*.md 2>/dev/null | head -1)
+    if [ -n "$CHANGES_MD" ]; then
+        echo "  Change Log PDF:"
+        python3 scripts/generate-changelog-pdf.py "$CHANGES_MD"
+    fi
+
     PROCESSED=$((PROCESSED + 1))
     echo "  Done: $DIR"
     echo ""
