@@ -32,13 +32,18 @@ The `/apply` command enforces strict guardrails:
 ├── .env                              # Optional: RESEND_API_KEY for email
 ├── .claude/
 │   ├── commands/
-│   │   └── apply.md                  # Main /apply command (8-section strategy)
+│   │   ├── apply.md                  # Main /apply command (8-section strategy)
+│   │   ├── gaps.md                   # Aggregate skills gaps across applications
+│   │   ├── pipeline.md              # Application pipeline funnel + alerts
+│   │   └── status.md                # Update application status in tracker
 │   └── settings.local.json           # Project permissions
 ├── documents/
 │   └── resume/                       # User places source resume here
 │       └── {Name}_Master_{YYMMDD}.md # Recommended naming (also .pdf, .docx)
 ├── job-descriptions/                 # Optional: saved JD files for reference
 ├── output/                           # Generated output, organized by company
+│   ├── gaps_report_{YYMMDD}.md       # Skills gap report (from /gaps)
+│   ├── gaps_report_{YYMMDD}.pdf      # Skills gap PDF (color-coded)
 │   └── {company-slug}/
 │       ├── {Name}_{Company}_{Role}_{YYMMDD}.md       # Tailored resume
 │       ├── {Name}_{Company}_{Role}_{YYMMDD}.pdf      # Resume PDF
@@ -53,8 +58,10 @@ The `/apply` command enforces strict guardrails:
 │   ├── generate-resume-pdf.py        # Resume markdown -> professional PDF
 │   ├── generate-resume-docx.py       # Resume markdown -> ATS-friendly DOCX
 │   ├── generate-strategy-pdf.py      # Strategy doc -> styled PDF (color-coded tables)
+│   ├── generate-gaps-pdf.py          # Gaps report -> color-coded PDF
 │   ├── generate-cover-letter-pdf.py  # Cover letter -> letter-format PDF
 │   ├── generate-cover-letter-docx.py # Cover letter -> ATS-friendly DOCX
+│   ├── pipeline-dashboard.py         # Streamlit pipeline dashboard (port 8505)
 │   └── run-apply.sh                  # Orchestration: command -> all docs -> Finder
 └── tracker.md                        # Application tracker (markdown table)
 ```
@@ -83,6 +90,30 @@ Tailor resume and generate application strategy for a target company/role.
 # No args (will prompt for both)
 /apply
 ```
+
+### `/gaps`
+Aggregate skills gaps across all applications into a prioritized upskilling report. Reads all strategy docs, parses keyword gap tables, and produces a color-coded matrix showing strengths, addressed skills, and gaps. Outputs markdown + PDF.
+
+```bash
+/gaps
+```
+
+### `/pipeline`
+Show application pipeline funnel, follow-up alerts, and salary summary. Reads `tracker.md` and displays ASCII funnel with conversion rates, flags overdue follow-ups, and summarizes salary data.
+
+```bash
+/pipeline
+```
+
+### `/status`
+Update application status in `tracker.md`. Fuzzy-matches company name, updates status + Last Updated + Follow-Up Due, and prints next action reminder.
+
+```bash
+/status Anthropic Screened
+/status Amazon Rejected
+```
+
+Valid statuses: `Applied`, `Screened`, `Interviewing`, `Offer`, `Accepted`, `Rejected`, `Withdrawn`, `Ghosted`
 
 ## Output Files
 
@@ -126,7 +157,16 @@ The `scripts/read-resume.py` script prefers `*_Master_*` pattern files. Falls ba
 
 ## Application Tracker
 
-`tracker.md` records all applications as a markdown table. Updated automatically by `/apply`. Edit manually to update status.
+`tracker.md` records all applications in a 9-column markdown table:
+
+```
+| Date | Company | Role | Status | Last Updated | Follow-Up Due | Resume | Strategy | Notes |
+```
+
+- Updated automatically by `/apply` (adds row) and `/status` (updates status/dates)
+- **Last Updated** — date of most recent status change
+- **Follow-Up Due** — next action date (Applied +7d, Screened +3d, Interviewing +1d, Offer +3d)
+- Old 7-column format (without Last Updated / Follow-Up Due) is auto-upgraded by `/status`
 
 ## Python Dependencies
 
@@ -140,7 +180,7 @@ markdown       # Markdown -> HTML conversion (strategy PDF)
 ### Setup
 
 ```bash
-pip3 install fpdf2 PyMuPDF python-docx markdown
+pip3 install fpdf2 PyMuPDF python-docx markdown streamlit pandas
 ```
 
 Or use the quick-start script:
@@ -152,6 +192,11 @@ bash setup.sh
 
 See `~/WORKSPACES.md` for navigation. Personal automation in `~/LifeOS/`, business tools in `~/BusinessOS/`.
 
+## Mistakes & Lessons Learned
+
+- **2026-03-04: v1 had zero verification on resume tailoring** — The original `/apply` relied entirely on a prompt-level "NEVER fabricate" instruction with no validation pass, no diff output, and no transparency into what changed. → Rule: any AI-generated content in the user's voice MUST have a verification step AND a human-readable change log. Prompt-level constraints alone are insufficient.
+- **2026-03-04: Cover letter was buried in strategy doc** — Users had to copy-paste the cover letter from the strategy markdown. No standalone file existed. → Rule: if a section of output is independently useful (submitted separately), generate it as its own file.
+
 ## Development Commands
 
 ```bash
@@ -162,9 +207,13 @@ python3 scripts/read-resume.py
 python3 scripts/generate-resume-pdf.py output/company/Name_Company_Role_260304.md
 python3 scripts/generate-resume-docx.py output/company/Name_Company_Role_260304.md
 python3 scripts/generate-strategy-pdf.py output/company/Name_Company_Role_Strategy_260304.md
+python3 scripts/generate-gaps-pdf.py output/gaps_report_260304.md
 python3 scripts/generate-cover-letter-pdf.py output/company/Name_Company_Role_Strategy_260304.md
 python3 scripts/generate-cover-letter-docx.py output/company/Name_Company_Role_Strategy_260304.md
 
 # Full pipeline
 bash scripts/run-apply.sh "CompanyName"
+
+# Pipeline dashboard (Streamlit on port 8505)
+python3 -m streamlit run ~/CareerOS/scripts/pipeline-dashboard.py --server.port 8505
 ```

@@ -374,10 +374,23 @@ Save to: `~/CareerOS/output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_
 
 ## Step 6: Update Application Tracker
 
-Read `~/CareerOS/tracker.md`. If it doesn't exist or is empty, create it with the header row. Append a new row:
+Read `~/CareerOS/tracker.md`. If it doesn't exist or is empty, create it with the 9-column header:
 
 ```
-| {today's date} | {COMPANY_NAME} | {ROLE_TITLE} | Applied | {CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_{DATE_STAMP}.md | {CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Strategy_{DATE_STAMP}.md | |
+# Application Tracker
+
+| Date | Company | Role | Status | Last Updated | Follow-Up Due | Resume | Strategy | Notes |
+|------|---------|------|--------|--------------|---------------|--------|----------|-------|
+```
+
+If the file exists with the old 7-column format (no `Last Updated` / `Follow-Up Due` columns), upgrade the header to 9 columns and backfill existing rows: set `Last Updated` to their `Date` value and `Follow-Up Due` to empty.
+
+Calculate `FOLLOW_UP_DATE` as today's date + 7 days (YYYY-MM-DD format).
+
+Append a new row:
+
+```
+| {today's date} | {COMPANY_NAME} | {ROLE_TITLE} | Applied | {today's date} | {FOLLOW_UP_DATE} | {CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_{DATE_STAMP}.md | {CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Strategy_{DATE_STAMP}.md | |
 ```
 
 ## Step 7: Display Summary
