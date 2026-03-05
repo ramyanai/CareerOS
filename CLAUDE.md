@@ -24,9 +24,11 @@ The `/apply` command enforces strict guardrails:
 ## Project Structure
 
 ```
-~/CareerOS/
+CareerOS/
 ├── CLAUDE.md
+├── README.md                         # GitHub README
 ├── README-gumroad.md                 # Gumroad product listing & setup guide
+├── LICENSE                           # MIT license
 ├── setup.sh                          # Quick-start installation script
 ├── .gitignore
 ├── .env                              # Optional: RESEND_API_KEY for email
@@ -40,6 +42,7 @@ The `/apply` command enforces strict guardrails:
 │   └── settings.local.json           # Project permissions
 ├── documents/
 │   └── resume/                       # User places source resume here
+│       ├── EXAMPLE_Master_Resume.md  # Sample resume format for new users
 │       └── {Name}_Master_{YYYY-MM-DD}.md # Recommended naming (also .pdf, .docx)
 ├── job-descriptions/                 # JD files for /apply and /batch
 │   ├── JD_CURRENT.txt                # Paste JDs here for /batch (plain text, NOT .rtf)
@@ -68,7 +71,8 @@ The `/apply` command enforces strict guardrails:
 │   ├── generate-cover-letter-docx.py # Cover letter -> ATS-friendly DOCX
 │   ├── pipeline-dashboard.py         # Streamlit pipeline dashboard (port 8505)
 │   ├── run-apply.sh                  # Orchestration: command -> all docs -> Finder
-│   └── run-batch.sh                  # Batch PDF/DOCX generation for multiple companies
+│   ├── run-batch.sh                  # Batch PDF/DOCX generation for multiple companies
+│   └── package.sh                    # Build clean .zip for Gumroad/GitHub distribution
 └── tracker.md                        # Application tracker (markdown table)
 ```
 
@@ -237,6 +241,7 @@ See `~/WORKSPACES.md` for navigation. Personal automation in `~/LifeOS/`, busine
 - **2026-03-04: Cover letter was buried in strategy doc** — Users had to copy-paste the cover letter from the strategy markdown. No standalone file existed. → Rule: if a section of output is independently useful (submitted separately), generate it as its own file.
 - **2026-03-04: Mixed date formats (YYMMDD vs YYYY-MM-DD)** — Filenames used YYMMDD while tracker/archives used YYYY-MM-DD, creating confusion. → Rule: pick one date format at project start and enforce it everywhere. Standardized to YYYY-MM-DD (ISO 8601). Cover letter display dates stay human-readable ("March 04, 2026").
 - **2026-03-04: Two-step workflow created unnecessary friction** — `/apply` generated markdown only, requiring a manual `bash scripts/run-apply.sh` step for PDFs/DOCX. Users forgot or found it tedious. → Rule: if a downstream step always follows an upstream step, integrate it. The command should deliver the complete output, not half of it.
+- **2026-03-05: Hardcoded paths blocked distribution** — Shell scripts used `/Users/ramyanair/CareerOS` and commands used `~/CareerOS/` everywhere, making the project impossible to distribute. Found via the package.sh safety check. → Rule: never use absolute or user-specific paths in scripts or commands. Use relative paths from the project root (`scripts/`, `output/`, `tracker.md`) since Claude Code and shell scripts both resolve from the working directory.
 - **2026-03-04: fpdf2 bgcolor attribute vs CSS style** — `style="background-color: ..."` on `<tr>` elements renders inconsistently in fpdf2's `write_html()`. The HTML4 `bgcolor` attribute on `<td>` cells works reliably. → Rule: for fpdf2 table cell coloring, always use `<td bgcolor="#hex">`, not CSS inline styles.
 
 ## Development Commands
