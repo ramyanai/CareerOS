@@ -20,7 +20,9 @@ Store:
 - `COMPANY_NAME` — display name (e.g., "Goldman Sachs")
 - `COMPANY_SLUG` — normalized: lowercase, hyphens for spaces (e.g., "goldman-sachs")
 - `ROLE_TITLE` — extracted from JD or user input
+- `ROLE_SLUG` — normalized: lowercase, hyphens for spaces, truncated to key words (e.g., "senior-pm")
 - `DATE_STAMP` — today in YYMMDD format
+- `CANDIDATE_NAME` — extracted from resume filename (see Step 2)
 
 ## Step 2: Read Source Resume
 
@@ -29,9 +31,13 @@ Run:
 python3 ~/CareerOS/scripts/read-resume.py
 ```
 
-This extracts text from the user's resume in `documents/resume/`. If it fails, tell the user to place their resume file there and stop.
+This extracts text from the user's resume in `documents/resume/`. The first line of output will be `NAME: First Last` if the filename follows the `{Name}_Master_*` pattern. Parse and store this as `CANDIDATE_NAME`.
 
-Save the full resume text for use in later steps.
+If `CANDIDATE_NAME` is empty (old-format filename), extract the name from the resume content's first heading.
+
+Save the full resume text (after the NAME line) for use in later steps.
+
+If the script fails, tell the user to place their resume file there and stop.
 
 ## Step 3: Research the Company
 
@@ -46,12 +52,31 @@ Take notes on what you find — you'll use this in the strategy document.
 
 ## Step 4: Generate Tailored Resume
 
-Create a tailored resume markdown file. The resume must:
+Create a tailored resume markdown file.
+
+### Tailoring Rules (Non-Negotiable)
+
+1. **No new facts**: Every company name, job title, date, degree, and metric in the output MUST exist in the source resume. If the source says "improved efficiency," you CANNOT write "improved efficiency by 40%."
+2. **No new skills from thin air**: Skills listed must exist in the source OR be clearly inferable (e.g., source has "AWS, GCP" -> "Cloud Architecture" is OK. Source has nothing about containers -> "Kubernetes" is NOT OK).
+3. **Reframing is not fabrication**: You may change verbs, reorder bullets, adjust framing. You may NOT add substance that wasn't there.
+4. **Keyword handling**: If a JD keyword cannot be honestly mapped to existing experience, mark it "Gap — not in experience" in the Keyword Gap Analysis. NEVER force-fit it into the resume.
+5. **Quantification rule**: Only use numbers that appear in the source. If the source has no metrics for a bullet, do not invent them.
+
+### ATS Formatting Rules
+
+- Section headings MUST be standard: "Summary", "Experience", "Education", "Skills" — no creative alternatives
+- No tables, columns, or multi-column layouts in the resume
+- Contact info as plain text at the top (never in headers/footers)
+- Reverse chronological order strictly enforced
+- Keywords must appear in context (inside achievement bullets), not just dumped in a skills list
+- Each JD keyword should appear at least once in a bullet AND once in the skills section where possible
+
+### Resume Content Rules
+
 - **Reorder bullets** to lead with experiences most relevant to the JD
 - **Mirror JD keywords** naturally in bullet points (don't keyword-stuff)
 - **Adjust the summary/objective** to align with this specific role
-- **Quantify achievements** where possible (%, $, scale metrics)
-- **NEVER fabricate** experience, skills, or achievements — only reframe and emphasize what exists
+- **Quantify achievements** where possible — but ONLY with numbers from the source
 - **Keep it to 1-2 pages** of content (concise, not padded)
 
 ### Resume Markdown Format
@@ -89,16 +114,31 @@ Graduation Year
 Skill 1, Skill 2, Skill 3, ...
 ```
 
-Save to: `~/CareerOS/output/{COMPANY_SLUG}/resume_{COMPANY_SLUG}_{DATE_STAMP}.md`
+Save to: `~/CareerOS/output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_{DATE_STAMP}.md`
+
+Where `CANDIDATE_NAME_SLUG` is the candidate's name with underscores (e.g., "Ram_Yanamandra").
 
 Create the output directory if it doesn't exist:
 ```bash
 mkdir -p ~/CareerOS/output/{COMPANY_SLUG}
 ```
 
+## Step 4.5: Verify Resume Integrity
+
+Before saving the tailored resume, perform a line-by-line verification:
+
+1. Read the source resume text (from Step 2) and the tailored resume you just wrote
+2. For EACH bullet in the tailored resume, confirm it maps to a specific bullet or fact in the source
+3. For EACH skill listed, confirm it exists in the source or is directly inferable (document the inference)
+4. Check: no new company names, job titles, dates, or degrees were added
+5. If ANY line fails verification, rewrite it to be traceable to the source
+6. Only after verification passes, save the file
+
+If you had to fix any lines, note them — they'll go in the change log.
+
 ## Step 5: Generate Application Strategy Document
 
-Create a comprehensive strategy document with these 6 sections:
+Create a comprehensive strategy document with these 8 sections:
 
 ### Strategy Markdown Format
 ```markdown
@@ -110,8 +150,10 @@ Create a comprehensive strategy document with these 6 sections:
 
 | JD Keyword / Phrase | Found in Resume? | Action Taken |
 |---------------------|-------------------|--------------|
-| keyword from JD     | Yes / No          | Added to bullet X / Already present / Cannot add (not in experience) |
+| keyword from JD     | Yes / No / Partial | Added to bullet X / Already present / Reframed / Gap — not in experience |
 | ...                 | ...               | ... |
+
+**Match Score: X/Y keywords addressed (Z%)**
 
 ## 2. Cover Letter Draft
 
@@ -123,6 +165,9 @@ Hook paragraph connecting personal motivation to company mission. Reference some
 
 ### Close
 Call to action, enthusiasm for next steps, thank you.
+
+Signed:
+{CANDIDATE_NAME}
 
 ## 3. Interview Talking Points
 
@@ -173,25 +218,166 @@ Prepare 3 stories in Situation-Task-Action-Result format:
 
 ## 6. Application Checklist
 
-- [ ] Submit tailored resume (PDF)
-- [ ] Write cover letter (use draft above as starting point)
+- [ ] Submit tailored resume (PDF + DOCX)
+- [ ] Submit cover letter (PDF + DOCX)
+- [ ] Review change log for accuracy
 - [ ] Customize LinkedIn headline for this role
 - [ ] Connect with 2-3 people at {COMPANY_NAME}
 - [ ] Research interviewer backgrounds before each round
 - [ ] Prepare 3 STAR stories (see above)
+- [ ] Prepare behavioral question responses (see Section 7)
 - [ ] Research recent company news before interview
 - [ ] Prepare thoughtful questions to ask interviewer
-- [ ] Send thank-you email within 24 hours of interview
+- [ ] Send thank-you email within 24 hours of interview (see Section 8)
+
+## 7. Interview Preparation
+
+### Predicted Behavioral Questions
+5-7 questions based on JD requirements, each with a response framework:
+
+**Q: "Tell me about a time you [JD requirement]"**
+- Lead with: [specific experience from resume]
+- Pivot to: [relevant skill/outcome]
+- Close with: [quantified result or lesson]
+
+(Repeat for each predicted question)
+
+### Technical / Domain Questions
+3-5 questions specific to the role's technical requirements, with brief answer frameworks.
+
+### Questions to Ask Them
+5 smart questions tailored to company/role (not generic). Examples:
+- Questions about team structure, growth plans, challenges
+- Questions that demonstrate research (reference recent news/launches)
+- Questions about success metrics for the role
+
+## 8. Follow-Up Email Templates
+
+### Post-Interview Thank You (send within 24 hours)
+Subject: Thank you — {ROLE_TITLE} interview
+
+Hi [Interviewer Name],
+
+Thank you for taking the time to speak with me today about the {ROLE_TITLE} role. I especially enjoyed our discussion about [specific topic from interview].
+
+[1-2 sentences reinforcing fit, referencing something discussed]
+
+I'm very excited about the opportunity to [specific contribution]. Please don't hesitate to reach out if you need any additional information.
+
+Best regards,
+{CANDIDATE_NAME}
+
+### "Haven't Heard Back" Follow-Up (1 week after interview)
+Subject: Following up — {ROLE_TITLE} application
+
+Hi [Recruiter/Hiring Manager Name],
+
+I hope this message finds you well. I wanted to follow up on my application for the {ROLE_TITLE} position. I remain very enthusiastic about the opportunity and would welcome the chance to discuss how my experience in [key area] can contribute to [team/goal].
+
+Please let me know if there's any additional information I can provide.
+
+Best regards,
+{CANDIDATE_NAME}
+
+### Negotiation Response (counter-offer template)
+Subject: Re: {ROLE_TITLE} Offer
+
+Hi [Name],
+
+Thank you for the offer — I'm excited about joining {COMPANY_NAME}. After reviewing the details and considering [market data / competing offers / scope of the role], I'd like to discuss [base salary / equity / sign-on / start date].
+
+Based on my research and experience level, I was hoping for [specific number/range]. I believe this reflects [reasoning].
+
+I'm confident we can find an arrangement that works for both sides. Looking forward to discussing further.
+
+Best regards,
+{CANDIDATE_NAME}
+
+### Acceptance Email
+Subject: Accepting the {ROLE_TITLE} offer
+
+Hi [Name],
+
+I'm thrilled to formally accept the offer for the {ROLE_TITLE} position at {COMPANY_NAME}. I appreciate the team's time throughout the interview process and I'm excited to contribute to [specific goal/team].
+
+Please let me know the next steps for onboarding. I'm looking forward to starting on [date].
+
+Best regards,
+{CANDIDATE_NAME}
+
+### Decline Email (professional bridge-keeping)
+Subject: Re: {ROLE_TITLE} Offer
+
+Hi [Name],
+
+Thank you so much for the offer to join {COMPANY_NAME} as {ROLE_TITLE}. After careful consideration, I've decided to pursue another opportunity that more closely aligns with my current career goals.
+
+I have a great deal of respect for what {COMPANY_NAME} is building, and I hope our paths cross again in the future. Thank you for your time and consideration throughout the process.
+
+Best regards,
+{CANDIDATE_NAME}
 ```
 
-Save to: `~/CareerOS/output/{COMPANY_SLUG}/{COMPANY_SLUG}_application_strategy.md`
+Save to: `~/CareerOS/output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Strategy_{DATE_STAMP}.md`
+
+## Step 5.5: Generate Change Log
+
+Create a change log documenting every modification made to the resume:
+
+### Change Log Format
+```markdown
+# Change Log: {CANDIDATE_NAME} — {COMPANY_NAME} {ROLE_TITLE}
+
+*Generated {today's date}*
+
+## Summary
+
+- **Bullets reworded:** N
+- **Bullets reordered:** N
+- **Bullets unchanged:** N
+- **Skills kept as-is:** N
+- **Skills consolidated/reframed:** N
+- **Keywords addressed:** X/Y (Z%)
+- **Gaps identified:** N
+
+## Section-by-Section Changes
+
+### Summary
+| Original | Tailored | Change Type | Reason |
+|----------|----------|-------------|--------|
+| Original summary text | New summary text | Reworded | Aligned to JD emphasis on X |
+
+### Experience — {Job Title at Company}
+| Original Bullet | Tailored Bullet | Change Type | Reason |
+|-----------------|-----------------|-------------|--------|
+| Original text   | Tailored text   | Reworded / Reordered / Unchanged | Keyword "X" from JD / Prioritized for relevance |
+
+(Repeat for each job in Experience)
+
+### Skills
+| Skill | Status | Notes |
+|-------|--------|-------|
+| Skill A | Kept | Already matches JD |
+| Skill B | Consolidated | Combined "X" and "Y" into "Z" |
+| Skill C | Gap | JD requires it, not in experience — listed in gap analysis |
+
+## Verification Notes
+
+- All company names verified against source: PASS
+- All dates verified against source: PASS
+- All metrics verified against source: PASS
+- No fabricated skills: PASS
+- Lines corrected during verification: N (list if any)
+```
+
+Save to: `~/CareerOS/output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Changes_{DATE_STAMP}.md`
 
 ## Step 6: Update Application Tracker
 
 Read `~/CareerOS/tracker.md`. If it doesn't exist or is empty, create it with the header row. Append a new row:
 
 ```
-| {today's date} | {COMPANY_NAME} | {ROLE_TITLE} | Applied | resume_{COMPANY_SLUG}_{DATE_STAMP}.md | {COMPANY_SLUG}_application_strategy.md | |
+| {today's date} | {COMPANY_NAME} | {ROLE_TITLE} | Applied | {CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_{DATE_STAMP}.md | {CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Strategy_{DATE_STAMP}.md | |
 ```
 
 ## Step 7: Display Summary
@@ -203,20 +389,22 @@ Print a concise summary:
 
 **Company:** {COMPANY_NAME}
 **Role:** {ROLE_TITLE}
+**Candidate:** {CANDIDATE_NAME}
 
 ### Files Created
-- `output/{COMPANY_SLUG}/resume_{COMPANY_SLUG}_{DATE_STAMP}.md`
-- `output/{COMPANY_SLUG}/{COMPANY_SLUG}_application_strategy.md`
+- Resume: `output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_{DATE_STAMP}.md`
+- Strategy: `output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Strategy_{DATE_STAMP}.md`
+- Change Log: `output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Changes_{DATE_STAMP}.md`
 
-### Key Keywords Added
-- keyword1, keyword2, keyword3, ...
+### Match Score
+- X/Y JD keywords addressed (Z%)
 
 ### Salary Range
 - Market: $X - $Y
 - Recommended ask: $X
 
 ### Next Steps
-Run `bash scripts/run-apply.sh` to generate PDFs and open the output folder.
+Run `bash scripts/run-apply.sh` to generate PDFs + DOCX files and open the output folder.
 ```
 
-**IMPORTANT:** Do NOT generate PDFs. The shell script `run-apply.sh` handles PDF generation after this command finishes. Only write the markdown files and display the summary.
+**IMPORTANT:** Do NOT generate PDFs or DOCX files. The shell script `run-apply.sh` handles all document generation after this command finishes. Only write the markdown files and display the summary.

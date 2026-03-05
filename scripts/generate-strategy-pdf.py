@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Convert application strategy markdown to a styled PDF.
 
-Portrait orientation, letter size. Uses markdown → HTML → write_html()
-for rich content (tables, formatted text). Pattern follows LifeOS tax-review PDF.
+Portrait orientation, letter size. Uses markdown -> HTML -> write_html()
+for rich content (tables, formatted text). Includes color-coded keyword
+gap analysis table and match score summary.
 
 Usage: generate-strategy-pdf.py <strategy.md>
 """
@@ -15,6 +16,11 @@ import markdown
 from fpdf import FPDF
 
 FONT_DIR = "/System/Library/Fonts/Supplemental"
+
+# Row background colors for keyword gap table
+COLOR_GREEN = "#dcfce7"   # Yes / Already present
+COLOR_YELLOW = "#fef9c3"  # Reframed / Added / Partial
+COLOR_RED = "#fee2e2"     # No / Cannot add / Gap
 
 
 def strip_tags_in_cells(html):
@@ -33,6 +39,120 @@ def strip_tags_in_cells(html):
         html,
         flags=re.DOTALL,
     )
+    return html
+
+
+def classify_row(cell_text):
+    """Classify a keyword gap row by its 'Found in Resume?' value."""
+    lower = cell_text.lower().strip()
+    if lower in ("yes", "already present"):
+        return "green"
+    elif lower in ("no", "gap", "cannot add"):
+        return "red"
+    elif lower in ("partial", "reframed", "added"):
+        return "yellow"
+    # Heuristic fallback
+    if "yes" in lower or "already" in lower or "present" in lower:
+        return "green"
+    if "no" in lower or "gap" in lower or "cannot" in lower or "not in" in lower:
+        return "red"
+    return "yellow"
+
+
+def color_keyword_gap_table(html):
+    """Inject background colors into keyword gap analysis table rows.
+
+    Identifies the keyword gap table by looking for the header containing
+    'Found in Resume?' and colors each data row based on the second column value.
+    """
+    # Find all tables
+    table_pattern = re.compile(r"(<table>)(.*?)(</table>)", re.DOTALL)
+
+    def process_table(match):
+        table_start = match.group(1)
+        table_content = match.group(2)
+        table_end = match.group(3)
+
+        # Check if this is the keyword gap table
+        if "Found in Resume?" not in table_content and "found in resume" not in table_content.lower():
+            return match.group(0)
+
+        # Process each row
+        row_pattern = re.compile(r"(<tr>)(.*?)(</tr>)", re.DOTALL)
+        rows = list(row_pattern.finditer(table_content))
+
+        new_content = table_content
+        for row_match in reversed(rows):  # Reverse to preserve positions
+            row_html = row_match.group(2)
+
+            # Skip header rows (contain <th>)
+            if "<th>" in row_html or "<th " in row_html:
+                continue
+
+            # Extract cells
+            cells = re.findall(r"<td[^>]*>(.*?)</td>", row_html, re.DOTALL)
+            if len(cells) >= 2:
+                status_cell = cells[1]  # "Found in Resume?" is the second column
+                color_class = classify_row(status_cell)
+
+                if color_class == "green":
+                    bg = COLOR_GREEN
+                elif color_class == "red":
+                    bg = COLOR_RED
+                else:
+                    bg = COLOR_YELLOW
+
+                # Replace <tr> with styled <tr>
+                colored_row = f'<tr style="background-color: {bg};">{row_html}</tr>'
+                start = row_match.start()
+                end = row_match.end()
+                new_content = new_content[:start] + colored_row + new_content[end:]
+
+        return table_start + new_content + table_end
+
+    return table_pattern.sub(process_table, html)
+
+
+def inject_match_score_bar(html):
+    """Find the match score line and add a colored bar before the table.
+
+    Looks for a line like: **Match Score: 12/15 keywords addressed (80%)**
+    and injects a visual bar representation.
+    """
+    score_pattern = re.compile(
+        r"<strong>Match Score:\s*(\d+)/(\d+)\s+keywords?\s+addressed\s*\((\d+)%\)</strong>"
+    )
+
+    match = score_pattern.search(html)
+    if not match:
+        return html
+
+    addressed = int(match.group(1))
+    total = int(match.group(2))
+    pct = int(match.group(3))
+
+    # Build a colored bar using HTML table (fpdf2 compatible)
+    green_width = max(pct, 5)  # Minimum width for visibility
+    red_width = 100 - green_width
+
+    bar_html = (
+        f'<p><strong>Match Score: {addressed}/{total} keywords addressed ({pct}%)</strong></p>'
+        f'<table width="100%"><tr>'
+        f'<td width="{green_width}%" style="background-color: {COLOR_GREEN};">&nbsp;</td>'
+        f'<td width="{red_width}%" style="background-color: {COLOR_RED};">&nbsp;</td>'
+        f'</tr></table><br/>'
+    )
+
+    # Replace the original match score line
+    original = match.group(0)
+    # Find the paragraph containing it
+    para_pattern = re.compile(rf"<p>{re.escape(original)}</p>")
+    if para_pattern.search(html):
+        html = para_pattern.sub(bar_html, html)
+    else:
+        # Just replace inline
+        html = html.replace(original, bar_html)
+
     return html
 
 
@@ -70,6 +190,12 @@ def main():
 
     # fpdf2 doesn't support nested tags in table cells
     html_body = strip_tags_in_cells(html_body)
+
+    # Color-code keyword gap table rows
+    html_body = color_keyword_gap_table(html_body)
+
+    # Add match score bar
+    html_body = inject_match_score_bar(html_body)
 
     # Style headings with navy blue instead of default red
     html_body = re.sub(

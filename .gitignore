@@ -2,3 +2,9 @@
 *.log
 .DS_Store
 __pycache__/
+
+# Personal data (excluded from Gumroad distribution)
+output/
+documents/resume/
+job-descriptions/
+tracker.md
