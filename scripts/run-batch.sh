@@ -6,7 +6,8 @@ set -e
 #    or: bash scripts/run-batch.sh adobe google        # Process specific company slugs
 
 export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
-cd /Users/ramyanair/CareerOS
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR/.."
 
 # Source .env if it exists (optional, for email support)
 if [ -f .env ]; then

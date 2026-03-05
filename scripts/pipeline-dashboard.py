@@ -4,7 +4,7 @@
 Parses tracker.md and displays funnel chart, timeline, salary comparison,
 follow-up alerts, and status breakdown.
 
-Launch: python3 -m streamlit run ~/CareerOS/scripts/pipeline-dashboard.py --server.port 8505
+Launch: python3 -m streamlit run scripts/pipeline-dashboard.py --server.port 8505
 """
 
 import os
@@ -14,7 +14,10 @@ from datetime import datetime, timedelta
 import pandas as pd
 import streamlit as st
 
-TRACKER_PATH = os.path.expanduser("~/CareerOS/tracker.md")
+# Find tracker.md relative to this script's location (project root)
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+_PROJECT_DIR = os.path.dirname(_SCRIPT_DIR)
+TRACKER_PATH = os.path.join(_PROJECT_DIR, "tracker.md")
 
 # Status colors
 STATUS_COLORS = {

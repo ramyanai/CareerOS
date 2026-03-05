@@ -26,7 +26,7 @@ If `$ARGUMENTS` is empty or doesn't contain a valid status as the last word, ask
 
 ## Step 3: Read Tracker
 
-Read `~/CareerOS/tracker.md`.
+Read `tracker.md`.
 
 If the file doesn't exist or is empty, tell the user: "No tracker.md found. Run `/apply` first." and stop.
 

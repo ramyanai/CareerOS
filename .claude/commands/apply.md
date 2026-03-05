@@ -28,7 +28,7 @@ Store:
 
 Run:
 ```bash
-python3 ~/CareerOS/scripts/read-resume.py
+python3 scripts/read-resume.py
 ```
 
 This extracts text from the user's resume in `documents/resume/`. The first line of output will be `NAME: First Last` if the filename follows the `{Name}_Master_*` pattern. Parse and store this as `CANDIDATE_NAME`.
@@ -114,13 +114,13 @@ Graduation Year
 Skill 1, Skill 2, Skill 3, ...
 ```
 
-Save to: `~/CareerOS/output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_{YYYY-MM-DD}.md`
+Save to: `output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_{YYYY-MM-DD}.md`
 
 Where `CANDIDATE_NAME_SLUG` is the candidate's name with underscores (e.g., "Ram_Yanamandra").
 
 Create the output directory if it doesn't exist:
 ```bash
-mkdir -p ~/CareerOS/output/{COMPANY_SLUG}
+mkdir -p output/{COMPANY_SLUG}
 ```
 
 ## Step 4.5: Verify Resume Integrity
@@ -381,7 +381,7 @@ Best regards,
 {CANDIDATE_NAME}
 ```
 
-Save to: `~/CareerOS/output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Strategy_{YYYY-MM-DD}.md`
+Save to: `output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Strategy_{YYYY-MM-DD}.md`
 
 ## Step 5.5: Generate Change Log
 
@@ -433,11 +433,11 @@ Create a change log documenting every modification made to the resume:
 - Lines corrected during verification: N (list if any)
 ```
 
-Save to: `~/CareerOS/output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Changes_{YYYY-MM-DD}.md`
+Save to: `output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Changes_{YYYY-MM-DD}.md`
 
 ## Step 6: Update Application Tracker
 
-Read `~/CareerOS/tracker.md`. If it doesn't exist or is empty, create it with the 9-column header:
+Read `tracker.md`. If it doesn't exist or is empty, create it with the 9-column header:
 
 ```
 # Application Tracker
@@ -460,7 +460,7 @@ Append a new row:
 
 Run the document generation pipeline:
 ```bash
-bash ~/CareerOS/scripts/run-apply.sh {COMPANY_SLUG}
+bash scripts/run-apply.sh {COMPANY_SLUG}
 ```
 
 This generates PDF + DOCX files for the resume, strategy, cover letter, and change log, then opens the output folder in Finder. Since the output directory already exists, `run-apply.sh` skips the `/apply` step and goes straight to document generation.

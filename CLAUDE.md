@@ -267,5 +267,5 @@ bash scripts/run-batch.sh
 bash scripts/run-batch.sh adobe google
 
 # Pipeline dashboard (Streamlit on port 8505)
-python3 -m streamlit run ~/CareerOS/scripts/pipeline-dashboard.py --server.port 8505
+python3 -m streamlit run scripts/pipeline-dashboard.py --server.port 8505
 ```

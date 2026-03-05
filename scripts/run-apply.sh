@@ -7,7 +7,8 @@ set -e
 #    or: bash scripts/run-apply.sh adobe          # Skip /apply, just generate docs for existing output dir
 
 export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
-cd /Users/ramyanair/CareerOS
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR/.."
 
 # Source .env if it exists (optional, for email support)
 if [ -f .env ]; then

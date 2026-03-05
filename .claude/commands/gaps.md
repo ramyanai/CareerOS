@@ -12,9 +12,9 @@ You are a career analyst. Your job is to aggregate keyword gap data from all str
 
 Use Glob to find all strategy docs:
 ```
-~/CareerOS/output/*/_Strategy_.md
-~/CareerOS/output/*/_application_strategy.md
-~/CareerOS/output/*/application_strategy.md
+output/*/_Strategy_.md
+output/*/_application_strategy.md
+output/*/application_strategy.md
 ```
 
 Also try `*Strategy*` and `*strategy*` patterns to catch all naming conventions.
@@ -66,7 +66,7 @@ Write top 3 prioritized recommendations based on:
 
 ## Step 5: Write Report
 
-Write the report to `~/CareerOS/output/gaps_report_{YYYY-MM-DD}.md` where YYYY-MM-DD is today's date.
+Write the report to `output/gaps_report_{YYYY-MM-DD}.md` where YYYY-MM-DD is today's date.
 
 Use this format:
 
@@ -118,7 +118,7 @@ Use this format:
 
 Run:
 ```bash
-python3 ~/CareerOS/scripts/generate-gaps-pdf.py ~/CareerOS/output/gaps_report_{YYYY-MM-DD}.md
+python3 scripts/generate-gaps-pdf.py output/gaps_report_{YYYY-MM-DD}.md
 ```
 
 ## Step 7: Display Summary

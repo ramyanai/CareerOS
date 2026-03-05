@@ -14,7 +14,7 @@ Run `date +%Y-%m-%d` to get today's date. Store as `TODAY`.
 
 ## Step 2: Read Tracker
 
-Read `~/CareerOS/tracker.md`.
+Read `tracker.md`.
 
 If the file doesn't exist or has no data rows, tell the user: "No applications tracked yet. Run `/apply` to add your first application." and stop.
 
@@ -117,5 +117,5 @@ If no salary data is found in Notes, skip this section.
 ### Visual Dashboard
 
 For a visual dashboard with charts, run:
-`python3 -m streamlit run ~/CareerOS/scripts/pipeline-dashboard.py --server.port 8505`
+`python3 -m streamlit run scripts/pipeline-dashboard.py --server.port 8505`
 ```

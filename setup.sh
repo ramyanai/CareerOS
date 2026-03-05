@@ -31,6 +31,10 @@ echo ""
 echo "Installing Python dependencies..."
 pip3 install fpdf2 python-docx PyMuPDF markdown
 
+echo ""
+echo "Installing optional dependencies (pipeline dashboard)..."
+pip3 install streamlit pandas 2>/dev/null || echo "Optional: streamlit/pandas not installed. Pipeline dashboard won't work, but everything else will."
+
 # Create directory structure
 echo ""
 echo "Creating directory structure..."
@@ -44,8 +48,8 @@ if [ ! -f tracker.md ]; then
     cat > tracker.md << 'TRACKER'
 # Application Tracker
 
-| Date | Company | Role | Status | Resume | Strategy | Notes |
-|------|---------|------|--------|--------|----------|-------|
+| Date | Company | Role | Status | Last Updated | Follow-Up Due | Resume | Strategy | Notes |
+|------|---------|------|--------|--------------|---------------|--------|----------|-------|
 TRACKER
 fi
 
@@ -73,6 +77,6 @@ echo "     cd $(pwd)"
 echo "     claude"
 echo "     /apply CompanyName"
 echo ""
-echo "  4. Generate PDF + DOCX files:"
-echo "     bash scripts/run-apply.sh"
+echo "  For a sample resume format, see:"
+echo "     documents/resume/EXAMPLE_Master_Resume.md"
 echo ""

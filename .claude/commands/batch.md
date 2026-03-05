@@ -12,7 +12,7 @@ You are a career strategist and resume optimization expert. Your job is to proce
 
 Run:
 ```bash
-python3 ~/CareerOS/scripts/read-resume.py
+python3 scripts/read-resume.py
 ```
 
 Parse `CANDIDATE_NAME` from the first line (`NAME: First Last`). Save the full resume text for reuse across all JDs.
@@ -23,17 +23,17 @@ If the script fails, tell the user to place their resume in `documents/resume/` 
 
 ### File Location
 
-Read the file at `~/CareerOS/job-descriptions/JD_CURRENT.txt`.
+Read the file at `job-descriptions/JD_CURRENT.txt`.
 
 **If the file doesn't exist or is empty (or contains only the template instructions):**
-- Check if `~/CareerOS/job-descriptions/JD_CURRENT.rtf` exists. If so, convert it:
+- Check if `job-descriptions/JD_CURRENT.rtf` exists. If so, convert it:
   ```bash
-  textutil -convert txt ~/CareerOS/job-descriptions/JD_CURRENT.rtf -output ~/CareerOS/job-descriptions/JD_CURRENT.txt
+  textutil -convert txt job-descriptions/JD_CURRENT.rtf -output job-descriptions/JD_CURRENT.txt
   ```
   Then read the converted `.txt` file.
 - If neither exists or both are empty, tell the user:
   ```
-  No job descriptions found. Paste JDs into ~/CareerOS/job-descriptions/JD_CURRENT.txt
+  No job descriptions found. Paste JDs into job-descriptions/JD_CURRENT.txt
   separated by === COMPANY NAME === markers, then re-run /batch.
   ```
   Stop here.
@@ -113,11 +113,11 @@ Create tailored resume markdown following ALL the same rules:
 
 **ATS Formatting:** Standard headings (Summary, Experience, Education, Skills), no tables, contact info plain text, reverse chronological, keywords in context.
 
-Save to: `~/CareerOS/output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_{YYYY-MM-DD}.md`
+Save to: `output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_{YYYY-MM-DD}.md`
 
 Create the output directory:
 ```bash
-mkdir -p ~/CareerOS/output/{COMPANY_SLUG}
+mkdir -p output/{COMPANY_SLUG}
 ```
 
 ### Step 4c: Verify Resume Integrity (same as /apply Step 4.5)
@@ -141,17 +141,17 @@ Create the 8-section strategy document:
 7. Interview Preparation (predicted questions with frameworks)
 8. Follow-Up Email Templates (thank you, follow-up, negotiation, acceptance, decline)
 
-Save to: `~/CareerOS/output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Strategy_{YYYY-MM-DD}.md`
+Save to: `output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Strategy_{YYYY-MM-DD}.md`
 
 ### Step 4e: Generate Change Log (same as /apply Step 5.5)
 
 Document every modification: original vs tailored text, change type, reason.
 
-Save to: `~/CareerOS/output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Changes_{YYYY-MM-DD}.md`
+Save to: `output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Changes_{YYYY-MM-DD}.md`
 
 ### Step 4f: Update Application Tracker (same as /apply Step 6)
 
-Read `~/CareerOS/tracker.md`. Append a new row for this application:
+Read `tracker.md`. Append a new row for this application:
 ```
 | {today's date} | {COMPANY_NAME} | {ROLE_TITLE} | Applied | {today's date} | {FOLLOW_UP_DATE} | {resume filename} | {strategy filename} | |
 ```
@@ -165,7 +165,7 @@ If tracker doesn't exist or is empty, create with 9-column header. Handle old 7-
 After processing all JDs, verify that each expected output directory exists and contains the required files:
 
 ```bash
-ls ~/CareerOS/output/{COMPANY_SLUG}/
+ls output/{COMPANY_SLUG}/
 ```
 
 For each company, confirm:
@@ -179,7 +179,7 @@ Report any missing files.
 
 After all JDs are processed:
 
-1. Determine archive filename: `~/CareerOS/job-descriptions/JD_Archive_YYYY-MM-DD.txt` (using today's date in ISO 8601)
+1. Determine archive filename: `job-descriptions/JD_Archive_YYYY-MM-DD.txt` (using today's date in ISO 8601)
 
 2. If the archive file already exists (user ran /batch twice today), **append** with a separator:
    ```

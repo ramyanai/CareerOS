@@ -3,8 +3,13 @@
 .DS_Store
 __pycache__/
 
-# Personal data (excluded from Gumroad distribution)
+# Personal data (excluded from distribution)
 output/
-documents/resume/
+documents/resume/*
+!documents/resume/EXAMPLE_Master_Resume.md
+!documents/resume/.gitkeep
 job-descriptions/
 tracker.md
+
+# Build artifacts
+dist/
