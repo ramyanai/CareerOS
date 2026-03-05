@@ -33,26 +33,29 @@ The `/apply` command enforces strict guardrails:
 ├── .claude/
 │   ├── commands/
 │   │   ├── apply.md                  # Main /apply command (8-section strategy)
+│   │   ├── batch.md                  # Batch process multiple JDs from JD_CURRENT.txt
 │   │   ├── gaps.md                   # Aggregate skills gaps across applications
 │   │   ├── pipeline.md              # Application pipeline funnel + alerts
 │   │   └── status.md                # Update application status in tracker
 │   └── settings.local.json           # Project permissions
 ├── documents/
 │   └── resume/                       # User places source resume here
-│       └── {Name}_Master_{YYMMDD}.md # Recommended naming (also .pdf, .docx)
-├── job-descriptions/                 # Optional: saved JD files for reference
+│       └── {Name}_Master_{YYYY-MM-DD}.md # Recommended naming (also .pdf, .docx)
+├── job-descriptions/                 # JD files for /apply and /batch
+│   ├── JD_CURRENT.txt                # Paste JDs here for /batch (plain text, NOT .rtf)
+│   └── JD_Archive_YYYY-MM-DD.txt     # Auto-archived after /batch runs
 ├── output/                           # Generated output, organized by company
-│   ├── gaps_report_{YYMMDD}.md       # Skills gap report (from /gaps)
-│   ├── gaps_report_{YYMMDD}.pdf      # Skills gap PDF (color-coded)
+│   ├── gaps_report_{YYYY-MM-DD}.md       # Skills gap report (from /gaps)
+│   ├── gaps_report_{YYYY-MM-DD}.pdf      # Skills gap PDF (color-coded)
 │   └── {company-slug}/
-│       ├── {Name}_{Company}_{Role}_{YYMMDD}.md       # Tailored resume
-│       ├── {Name}_{Company}_{Role}_{YYMMDD}.pdf      # Resume PDF
-│       ├── {Name}_{Company}_{Role}_{YYMMDD}.docx     # Resume DOCX (ATS)
-│       ├── {Name}_{Company}_{Role}_Strategy_{YYMMDD}.md   # Strategy doc
-│       ├── {Name}_{Company}_{Role}_Strategy_{YYMMDD}.pdf  # Strategy PDF
-│       ├── {Name}_{Company}_{Role}_Changes_{YYMMDD}.md    # Change log
-│       ├── {Name}_{Company}_{Role}_CoverLetter_{YYMMDD}.pdf   # Cover letter PDF
-│       └── {Name}_{Company}_{Role}_CoverLetter_{YYMMDD}.docx  # Cover letter DOCX
+│       ├── {Name}_{Company}_{Role}_{YYYY-MM-DD}.md       # Tailored resume
+│       ├── {Name}_{Company}_{Role}_{YYYY-MM-DD}.pdf      # Resume PDF
+│       ├── {Name}_{Company}_{Role}_{YYYY-MM-DD}.docx     # Resume DOCX (ATS)
+│       ├── {Name}_{Company}_{Role}_Strategy_{YYYY-MM-DD}.md   # Strategy doc
+│       ├── {Name}_{Company}_{Role}_Strategy_{YYYY-MM-DD}.pdf  # Strategy PDF
+│       ├── {Name}_{Company}_{Role}_Changes_{YYYY-MM-DD}.md    # Change log
+│       ├── {Name}_{Company}_{Role}_CoverLetter_{YYYY-MM-DD}.pdf   # Cover letter PDF
+│       └── {Name}_{Company}_{Role}_CoverLetter_{YYYY-MM-DD}.docx  # Cover letter DOCX
 ├── scripts/
 │   ├── read-resume.py                # Extract text from PDF/DOCX/MD resume
 │   ├── generate-resume-pdf.py        # Resume markdown -> professional PDF
@@ -62,16 +65,24 @@ The `/apply` command enforces strict guardrails:
 │   ├── generate-cover-letter-pdf.py  # Cover letter -> letter-format PDF
 │   ├── generate-cover-letter-docx.py # Cover letter -> ATS-friendly DOCX
 │   ├── pipeline-dashboard.py         # Streamlit pipeline dashboard (port 8505)
-│   └── run-apply.sh                  # Orchestration: command -> all docs -> Finder
+│   ├── run-apply.sh                  # Orchestration: command -> all docs -> Finder
+│   └── run-batch.sh                  # Batch PDF/DOCX generation for multiple companies
 └── tracker.md                        # Application tracker (markdown table)
 ```
 
 ## Workflow
 
-1. Place your source resume in `documents/resume/` as `YourName_Master_YYMMDD.md` (or .pdf/.docx)
+### Single Application
+1. Place your source resume in `documents/resume/` as `YourName_Master_YYYY-MM-DD.md` (or .pdf/.docx)
 2. Run `/apply CompanyName` and paste the full job description when prompted
 3. Command generates tailored resume, strategy (8 sections), and change log as markdown
 4. Run `bash scripts/run-apply.sh` to generate PDF + DOCX files and open the output folder
+
+### Batch Processing (Multiple JDs)
+1. Paste multiple JDs into `job-descriptions/JD_CURRENT.txt` (plain text, **not** RTF) separated by `=== COMPANY NAME ===` markers
+2. Run `/batch` — parses all JDs, confirms the batch plan, then processes each sequentially
+3. After completion, JD_CURRENT.txt is archived to `JD_Archive_YYYY-MM-DD.txt` and cleared for reuse
+4. Run `bash scripts/run-batch.sh` to generate PDFs + DOCX for all companies
 
 **Key rule:** Commands write markdown only. Shell scripts handle PDF/DOCX generation.
 
@@ -90,6 +101,29 @@ Tailor resume and generate application strategy for a target company/role.
 # No args (will prompt for both)
 /apply
 ```
+
+### `/batch`
+Process multiple job descriptions from `JD_CURRENT.txt` in one session. Generates a complete application package (resume + strategy + change log) for each JD, updates the tracker, then archives the source file.
+
+```bash
+# Paste JDs into job-descriptions/JD_CURRENT.txt first, then:
+/batch
+```
+
+**JD_CURRENT.txt format:**
+```
+=== Adobe ===
+
+[Full job description text]
+
+=== Google | Senior PM ===
+
+[Full job description text]
+```
+
+- Separator: `=== COMPANY NAME ===` (role title optional after `|`)
+- Save as plain text (`.txt`), not RTF
+- After processing, file is archived as `JD_Archive_YYYY-MM-DD.txt` and cleared
 
 ### `/gaps`
 Aggregate skills gaps across all applications into a prioritized upskilling report. Reads all strategy docs, parses keyword gap tables, and produces a color-coded matrix showing strengths, addressed skills, and gaps. Outputs markdown + PDF.
@@ -128,11 +162,11 @@ Each `/apply` run generates 8 files:
 
 ## File Naming Convention
 
-- **Source resume**: `{Name}_Master_{YYMMDD}.md` in `documents/resume/`
-- **Tailored resume**: `{Name}_{Company}_{Role}_{YYMMDD}.md/.pdf/.docx`
-- **Strategy**: `{Name}_{Company}_{Role}_Strategy_{YYMMDD}.md/.pdf`
-- **Change log**: `{Name}_{Company}_{Role}_Changes_{YYMMDD}.md`
-- **Cover letter**: `{Name}_{Company}_{Role}_CoverLetter_{YYMMDD}.pdf/.docx`
+- **Source resume**: `{Name}_Master_{YYYY-MM-DD}.md` in `documents/resume/`
+- **Tailored resume**: `{Name}_{Company}_{Role}_{YYYY-MM-DD}.md/.pdf/.docx`
+- **Strategy**: `{Name}_{Company}_{Role}_Strategy_{YYYY-MM-DD}.md/.pdf`
+- **Change log**: `{Name}_{Company}_{Role}_Changes_{YYYY-MM-DD}.md`
+- **Cover letter**: `{Name}_{Company}_{Role}_CoverLetter_{YYYY-MM-DD}.pdf/.docx`
 
 Name extracted from master resume filename. Company and Role from JD parsing. Company slug: lowercase, hyphens for spaces.
 
@@ -204,15 +238,24 @@ See `~/WORKSPACES.md` for navigation. Personal automation in `~/LifeOS/`, busine
 python3 scripts/read-resume.py
 
 # Generate documents standalone
-python3 scripts/generate-resume-pdf.py output/company/Name_Company_Role_260304.md
-python3 scripts/generate-resume-docx.py output/company/Name_Company_Role_260304.md
-python3 scripts/generate-strategy-pdf.py output/company/Name_Company_Role_Strategy_260304.md
-python3 scripts/generate-gaps-pdf.py output/gaps_report_260304.md
-python3 scripts/generate-cover-letter-pdf.py output/company/Name_Company_Role_Strategy_260304.md
-python3 scripts/generate-cover-letter-docx.py output/company/Name_Company_Role_Strategy_260304.md
+python3 scripts/generate-resume-pdf.py output/company/Name_Company_Role_2026-03-04.md
+python3 scripts/generate-resume-docx.py output/company/Name_Company_Role_2026-03-04.md
+python3 scripts/generate-strategy-pdf.py output/company/Name_Company_Role_Strategy_2026-03-04.md
+python3 scripts/generate-gaps-pdf.py output/gaps_report_2026-03-04.md
+python3 scripts/generate-cover-letter-pdf.py output/company/Name_Company_Role_Strategy_2026-03-04.md
+python3 scripts/generate-cover-letter-docx.py output/company/Name_Company_Role_Strategy_2026-03-04.md
 
-# Full pipeline
+# Full pipeline (single company)
 bash scripts/run-apply.sh "CompanyName"
+
+# Generate docs for existing output dir (skip /apply)
+bash scripts/run-apply.sh company-slug
+
+# Batch PDF/DOCX generation (all dirs modified today)
+bash scripts/run-batch.sh
+
+# Batch PDF/DOCX for specific companies
+bash scripts/run-batch.sh adobe google
 
 # Pipeline dashboard (Streamlit on port 8505)
 python3 -m streamlit run ~/CareerOS/scripts/pipeline-dashboard.py --server.port 8505

@@ -66,7 +66,7 @@ Write top 3 prioritized recommendations based on:
 
 ## Step 5: Write Report
 
-Write the report to `~/CareerOS/output/gaps_report_{YYMMDD}.md` where YYMMDD is today's date.
+Write the report to `~/CareerOS/output/gaps_report_{YYYY-MM-DD}.md` where YYYY-MM-DD is today's date.
 
 Use this format:
 
@@ -118,7 +118,7 @@ Use this format:
 
 Run:
 ```bash
-python3 ~/CareerOS/scripts/generate-gaps-pdf.py ~/CareerOS/output/gaps_report_{YYMMDD}.md
+python3 ~/CareerOS/scripts/generate-gaps-pdf.py ~/CareerOS/output/gaps_report_{YYYY-MM-DD}.md
 ```
 
 ## Step 7: Display Summary
@@ -134,8 +134,8 @@ Print:
 **Top priority:** [#1 gap skill]
 
 ### Files
-- Report: `output/gaps_report_{YYMMDD}.md`
-- PDF: `output/gaps_report_{YYMMDD}.pdf`
+- Report: `output/gaps_report_{YYYY-MM-DD}.md`
+- PDF: `output/gaps_report_{YYYY-MM-DD}.pdf`
 
 ### Top 3 Upskilling Priorities
 1. [Skill] — gap in N applications

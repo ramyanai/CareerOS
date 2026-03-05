@@ -21,7 +21,7 @@ Store:
 - `COMPANY_SLUG` — normalized: lowercase, hyphens for spaces (e.g., "goldman-sachs")
 - `ROLE_TITLE` — extracted from JD or user input
 - `ROLE_SLUG` — normalized: lowercase, hyphens for spaces, truncated to key words (e.g., "senior-pm")
-- `DATE_STAMP` — today in YYMMDD format
+- `DATE_STAMP` — today in YYYY-MM-DD format
 - `CANDIDATE_NAME` — extracted from resume filename (see Step 2)
 
 ## Step 2: Read Source Resume
@@ -114,7 +114,7 @@ Graduation Year
 Skill 1, Skill 2, Skill 3, ...
 ```
 
-Save to: `~/CareerOS/output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_{DATE_STAMP}.md`
+Save to: `~/CareerOS/output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_{YYYY-MM-DD}.md`
 
 Where `CANDIDATE_NAME_SLUG` is the candidate's name with underscores (e.g., "Ram_Yanamandra").
 
@@ -318,7 +318,7 @@ Best regards,
 {CANDIDATE_NAME}
 ```
 
-Save to: `~/CareerOS/output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Strategy_{DATE_STAMP}.md`
+Save to: `~/CareerOS/output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Strategy_{YYYY-MM-DD}.md`
 
 ## Step 5.5: Generate Change Log
 
@@ -370,7 +370,7 @@ Create a change log documenting every modification made to the resume:
 - Lines corrected during verification: N (list if any)
 ```
 
-Save to: `~/CareerOS/output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Changes_{DATE_STAMP}.md`
+Save to: `~/CareerOS/output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Changes_{YYYY-MM-DD}.md`
 
 ## Step 6: Update Application Tracker
 
@@ -390,7 +390,7 @@ Calculate `FOLLOW_UP_DATE` as today's date + 7 days (YYYY-MM-DD format).
 Append a new row:
 
 ```
-| {today's date} | {COMPANY_NAME} | {ROLE_TITLE} | Applied | {today's date} | {FOLLOW_UP_DATE} | {CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_{DATE_STAMP}.md | {CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Strategy_{DATE_STAMP}.md | |
+| {today's date} | {COMPANY_NAME} | {ROLE_TITLE} | Applied | {today's date} | {FOLLOW_UP_DATE} | {CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_{YYYY-MM-DD}.md | {CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Strategy_{YYYY-MM-DD}.md | |
 ```
 
 ## Step 7: Display Summary
@@ -405,9 +405,9 @@ Print a concise summary:
 **Candidate:** {CANDIDATE_NAME}
 
 ### Files Created
-- Resume: `output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_{DATE_STAMP}.md`
-- Strategy: `output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Strategy_{DATE_STAMP}.md`
-- Change Log: `output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Changes_{DATE_STAMP}.md`
+- Resume: `output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_{YYYY-MM-DD}.md`
+- Strategy: `output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Strategy_{YYYY-MM-DD}.md`
+- Change Log: `output/{COMPANY_SLUG}/{CANDIDATE_NAME_SLUG}_{COMPANY_SLUG}_{ROLE_SLUG}_Changes_{YYYY-MM-DD}.md`
 
 ### Match Score
 - X/Y JD keywords addressed (Z%)

@@ -4,6 +4,7 @@ set -e
 # CareerOS apply pipeline: /apply command -> PDFs + DOCX -> open Finder
 # Usage: bash scripts/run-apply.sh "CompanyName"
 #    or: bash scripts/run-apply.sh /path/to/job-description.txt
+#    or: bash scripts/run-apply.sh adobe          # Skip /apply, just generate docs for existing output dir
 
 export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
 cd /Users/ramyanair/CareerOS
@@ -17,23 +18,30 @@ ARGS="$*"
 if [ -z "$ARGS" ]; then
     echo "Usage: bash scripts/run-apply.sh \"CompanyName\""
     echo "   or: bash scripts/run-apply.sh /path/to/job-description.txt"
+    echo "   or: bash scripts/run-apply.sh company-slug   # Docs only (skip /apply)"
     exit 1
 fi
 
-echo "=== CareerOS: Running /apply $ARGS ==="
-claude -p "/apply $ARGS"
+# If the argument matches an existing output directory, skip /apply and go straight to doc generation
+if [ -d "output/$ARGS" ]; then
+    LATEST_DIR="output/$ARGS/"
+    echo "=== CareerOS: Generating docs for existing output: $LATEST_DIR ==="
+else
+    echo "=== CareerOS: Running /apply $ARGS ==="
+    claude -p "/apply $ARGS"
 
-# Find the most recently modified output directory
-LATEST_DIR=$(ls -td output/*/ 2>/dev/null | head -1)
-if [ -z "$LATEST_DIR" ]; then
-    echo "Error: No output directory found"
-    exit 1
+    # Find the most recently modified output directory
+    LATEST_DIR=$(ls -td output/*/ 2>/dev/null | head -1)
+    if [ -z "$LATEST_DIR" ]; then
+        echo "Error: No output directory found"
+        exit 1
+    fi
 fi
 
 echo "=== Generating documents in $LATEST_DIR ==="
 
 # --- Resume PDF ---
-# Try new naming pattern first (*_YYMMDD.md without Strategy/Changes/CoverLetter)
+# Try new naming pattern first (*_YYYY-MM-DD.md without Strategy/Changes/CoverLetter)
 RESUME_MD=$(ls -t "$LATEST_DIR"*.md 2>/dev/null | grep -v -E '(Strategy|Changes|CoverLetter|application_strategy)' | head -1)
 # Fall back to old naming
 if [ -z "$RESUME_MD" ]; then

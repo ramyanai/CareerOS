@@ -45,7 +45,7 @@ def find_resume(resume_dir):
 def extract_name(filename):
     """Extract candidate name from filename.
 
-    Expected pattern: FirstName_LastName_Master_YYMMDD.ext
+    Expected pattern: FirstName_LastName_Master_YYYY-MM-DD.ext
     Returns: "FirstName LastName" or None if pattern doesn't match.
     """
     basename = os.path.splitext(os.path.basename(filename))[0]
