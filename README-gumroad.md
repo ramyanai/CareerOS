@@ -1,6 +1,6 @@
 # CareerOS -- AI Resume Tailoring Engine
 
-Paste a job description. Get 9 tailored documents in 90 seconds. Every change is traceable to your original resume -- no AI hallucinations.
+Paste a job description. Get a complete application package -- tailored resume, cover letter, strategy doc, and change log. Every change is traceable to your original resume. No AI hallucinations.
 
 ## What You Get
 
@@ -72,7 +72,7 @@ claude
 /apply Google
 ```
 
-Paste the full job description when prompted. All 9 files (MD + PDF + DOCX) are generated automatically and the output folder opens in Finder.
+Paste the full job description when prompted. All files (MD + PDF + DOCX) are generated automatically and the output folder opens in Finder when complete.
 
 ## How It Works
 

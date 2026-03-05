@@ -1,6 +1,6 @@
 # CareerOS
 
-AI-powered job application tailoring engine built on Claude Code. Paste a job description, get a complete application package — tailored resume, cover letter, strategy doc, and change log — with every modification traceable to your original resume.
+AI-powered job application tailoring engine built on Claude Code. Paste a job description, get a complete application package — tailored resume, cover letter, strategy doc, and change log — with every modification traceable to your original resume. No hallucinated skills. No invented metrics. Gaps are gaps.
 
 ## Why CareerOS?
 
@@ -59,7 +59,7 @@ claude
 /apply Google
 ```
 
-Paste the full job description when prompted. The command generates all 9 files and opens the output folder.
+Paste the full job description when prompted. The command generates all 9 files and opens the output folder when complete.
 
 ## Resume Format
 
