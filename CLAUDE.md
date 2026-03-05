@@ -230,6 +230,8 @@ See `~/WORKSPACES.md` for navigation. Personal automation in `~/LifeOS/`, busine
 - **2026-03-04: v1 had zero verification on resume tailoring** — The original `/apply` relied entirely on a prompt-level "NEVER fabricate" instruction with no validation pass, no diff output, and no transparency into what changed. → Rule: any AI-generated content in the user's voice MUST have a verification step AND a human-readable change log. Prompt-level constraints alone are insufficient.
 - **2026-03-04: Cover letter was buried in strategy doc** — Users had to copy-paste the cover letter from the strategy markdown. No standalone file existed. → Rule: if a section of output is independently useful (submitted separately), generate it as its own file.
 - **2026-03-04: Mixed date formats (YYMMDD vs YYYY-MM-DD)** — Filenames used YYMMDD while tracker/archives used YYYY-MM-DD, creating confusion. → Rule: pick one date format at project start and enforce it everywhere. Standardized to YYYY-MM-DD (ISO 8601). Cover letter display dates stay human-readable ("March 04, 2026").
+- **2026-03-04: Two-step workflow created unnecessary friction** — `/apply` generated markdown only, requiring a manual `bash scripts/run-apply.sh` step for PDFs/DOCX. Users forgot or found it tedious. → Rule: if a downstream step always follows an upstream step, integrate it. The command should deliver the complete output, not half of it.
+- **2026-03-04: fpdf2 bgcolor attribute vs CSS style** — `style="background-color: ..."` on `<tr>` elements renders inconsistently in fpdf2's `write_html()`. The HTML4 `bgcolor` attribute on `<td>` cells works reliably. → Rule: for fpdf2 table cell coloring, always use `<td bgcolor="#hex">`, not CSS inline styles.
 
 ## Development Commands
 
