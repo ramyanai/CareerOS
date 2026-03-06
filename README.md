@@ -42,7 +42,7 @@ Most AI resume tools hallucinate. They add skills you don't have, inflate number
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/youruser/CareerOS.git
+git clone https://github.com/ramyanai/CareerOS.git
 cd CareerOS
 
 # 2. Run setup (installs Python deps, creates directories)
