@@ -32,6 +32,10 @@ Most AI resume tools hallucinate. They add skills you don't have, inflate number
 | `/pipeline` | Pipeline funnel, follow-up alerts, salary summary |
 | `/status` | Update application status and set follow-up reminders |
 
+## User Guide
+
+New to CareerOS? Read the **[User Guide](USER-GUIDE.md)** for a detailed walkthrough — from setup to your first application to batch processing.
+
 ## Requirements
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) (free CLI from Anthropic)
