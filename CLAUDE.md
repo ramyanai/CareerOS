@@ -27,7 +27,7 @@ The `/apply` command enforces strict guardrails:
 CareerOS/
 ├── CLAUDE.md
 ├── README.md                         # GitHub README
-├── README-gumroad.md                 # Gumroad product listing & setup guide
+├── USER-GUIDE.md                     # Step-by-step user guide
 ├── LICENSE                           # MIT license
 ├── setup.sh                          # Quick-start installation script
 ├── .gitignore
@@ -72,7 +72,7 @@ CareerOS/
 │   ├── pipeline-dashboard.py         # Streamlit pipeline dashboard (port 8505)
 │   ├── run-apply.sh                  # Orchestration: command -> all docs -> Finder
 │   ├── run-batch.sh                  # Batch PDF/DOCX generation for multiple companies
-│   └── package.sh                    # Build clean .zip for Gumroad/GitHub distribution
+│   └── package.sh                    # Build clean .zip for distribution
 └── tracker.md                        # Application tracker (markdown table)
 ```
 

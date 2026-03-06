@@ -145,6 +145,7 @@ CareerOS/
 ├── scripts/                   # PDF/DOCX generation scripts
 ├── setup.sh                   # Quick-start installer
 ├── tracker.md                 # Application tracker
+├── USER-GUIDE.md              # Step-by-step walkthrough
 └── README.md
 ```
 
