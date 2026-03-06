@@ -254,6 +254,10 @@ CareerOS/
   setup.sh              # Quick-start installer
 ```
 
+## Caveat
+
+This tool generates drafts, not final submissions. The guardrails reduce hallucination but don't eliminate it — always review before you submit.
+
 ## License
 
 MIT — use it, fork it, improve it.

@@ -153,6 +153,10 @@ CareerOS/
 
 If you have a Claude Pro or Max subscription, there's nothing extra to pay — Claude Code usage is included. If using an API key instead, each `/apply` run costs approximately $0.50-1.00 depending on resume length and JD complexity.
 
+## Caveat
+
+This tool generates drafts, not final submissions. The guardrails reduce hallucination but don't eliminate it — always review before you submit.
+
 ## License
 
 MIT
