@@ -38,8 +38,8 @@ New to CareerOS? Read the **[User Guide](USER-GUIDE.md)** for a detailed walkthr
 
 ## Requirements
 
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) (free CLI from Anthropic)
-- Anthropic API key (~$0.50-1.00 per application)
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) CLI from Anthropic
+- A Claude Pro ($20/mo), Max ($100/mo), or Max 5x ($200/mo) subscription — or an Anthropic API key
 - Python 3.9+ with: `fpdf2`, `python-docx`, `PyMuPDF`, `markdown`
 
 ## Quick Start
@@ -52,13 +52,10 @@ cd CareerOS
 # 2. Run setup (installs Python deps, creates directories)
 bash setup.sh
 
-# 3. Set your API key
-export ANTHROPIC_API_KEY="your-key-here"
-
-# 4. Place your master resume
+# 3. Place your master resume
 cp ~/your-resume.md documents/resume/Your_Name_Master_2026-03-04.md
 
-# 5. Launch Claude Code and run your first application
+# 4. Launch Claude Code and run your first application
 claude
 /apply Google
 ```
@@ -153,7 +150,7 @@ CareerOS/
 
 ## Cost
 
-Each `/apply` run uses approximately $0.50-1.00 in Anthropic API credits, depending on resume length and JD complexity. Claude Code itself is free.
+If you have a Claude Pro or Max subscription, there's nothing extra to pay — Claude Code usage is included. If using an API key instead, each `/apply` run costs approximately $0.50-1.00 depending on resume length and JD complexity.
 
 ## License
 

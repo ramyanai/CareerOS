@@ -8,7 +8,7 @@ Before you start, you need:
 
 1. **Python 3.9+** — check with `python3 --version`
 2. **Claude Code CLI** — install with `npm install -g @anthropic-ai/claude-code`
-3. **Anthropic API key** — get one at [console.anthropic.com](https://console.anthropic.com/)
+3. **A Claude subscription** (Pro, Max, or Max 5x) — or an Anthropic API key if you prefer pay-per-use
 
 ## Setup
 
@@ -19,12 +19,15 @@ cd CareerOS
 
 # Run setup (installs Python dependencies, creates directories)
 bash setup.sh
-
-# Set your API key
-export ANTHROPIC_API_KEY="your-key-here"
 ```
 
 Setup installs: `fpdf2`, `python-docx`, `PyMuPDF`, `markdown`. Optional: `streamlit` and `pandas` for the pipeline dashboard.
+
+If you have a Claude Pro or Max subscription, you're ready to go — Claude Code usage is included. If using an API key instead, set it with:
+
+```bash
+export ANTHROPIC_API_KEY="your-key-here"
+```
 
 ## Step 1: Prepare Your Master Resume
 
@@ -66,7 +69,7 @@ The tool will:
 6. Generate all documents (PDF + DOCX)
 7. Open the output folder in Finder
 
-**Cost:** ~$0.50-1.00 per application in Anthropic API credits.
+**Cost:** Included with your Claude Pro/Max subscription. If using an API key, ~$0.50-1.00 per application.
 
 ## Step 3: Review Your Output
 
